@@ -47,23 +47,3 @@ storage.rules   -> deny-all until upload functionality is implemented
 ```
 
 See `docs/MIDTERM_SCOPE.md` for roadmap and presentation notes.
-
-## Before pushing to GitHub
-
-Run `npm run typecheck` and `npm run build`, ensure `.env` is ignored, and commit source code + Firebase rules + README (not `node_modules` or `dist`).
-
-## Code formatting
-
-The source uses clear TypeScript names, consistent formatting, and small reusable components where practical. To automatically format the entire project after installing dependencies:
-
-```bash
-npm run format
-```
-
-Check formatting without changing files:
-
-```bash
-npm run format:check
-```
-
-These commands use Prettier. The application logic stays the same.
