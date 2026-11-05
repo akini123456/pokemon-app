@@ -1,0 +1,108 @@
+# Dependencies
+node_modules/
+.pnp.*
+
+# Yarn (Berry)
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+*-firebase-adminsdk-*.json
+serviceAccountKey.json
+service-account*.json
+
+# Signing keys and certificates
+*.keystore
+!debug.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+keystore.properties
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Uncomment if you use Expo prebuild and generate native folders on demand
+# /ios
+# /android
+
+# Metro
+.metro-health-check*
+
+# iOS / Xcode
+ios/Pods/
+ios/build/
+ios/.xcode.env.local
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+**/*.xcuserstate
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Android / Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/.kotlin/
+android/local.properties
+android/captures/
+*.hprof
+*.apk
+*.aab
+
+# Ruby / CocoaPods
+vendor/bundle/
+.bundle/
+
+# Fastlane
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots
+**/fastlane/test_output
+
+# Testing
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs and editors
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS files
+.DS_Store
+Thumbs.db
