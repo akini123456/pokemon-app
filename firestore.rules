@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function member(storeId) {
+      return signedIn() && exists(/databases/$(database)/documents/stores/$(storeId)/members/$(request.auth.uid));
+    }
+    function manager(storeId) {
+      return member(storeId) &&
+        get(/databases/$(database)/documents/stores/$(storeId)/members/$(request.auth.uid)).data.role in ['owner','manager'];
+    }
+    function owner(storeId) {
+      return member(storeId) &&
+        get(/databases/$(database)/documents/stores/$(storeId)/members/$(request.auth.uid)).data.role == 'owner';
+    }
+    match /stores/{storeId} {
+      allow get: if member(storeId);
+      allow list, create, delete: if false;
+      allow update: if manager(storeId)
+        && request.resource.data.diff(resource.data).affectedKeys()
+           .hasOnly(['name','email','description','theme'])
+        && request.resource.data.name is string
+        && request.resource.data.email is string
+        && request.resource.data.description is string
+        && request.resource.data.theme is map;
+      match /members/{uid} {
+        allow get: if signedIn() && (request.auth.uid == uid || owner(storeId));
+        allow list: if owner(storeId);
+        allow write: if false; // privileged membership changes use Cloud Functions
+      }
+      match /products/{productId} {
+        allow read: if member(storeId);
+        allow create, update: if manager(storeId)
+          && request.resource.data.id == productId
+          && request.resource.data.name is string
+          && request.resource.data.game is string
+          && request.resource.data.sku is string
+          && request.resource.data.price is number
+          && request.resource.data.price >= 0
+          && request.resource.data.quantity is int
+          && request.resource.data.quantity >= 0
+          && request.resource.data.published is bool;
+        allow delete: if manager(storeId);
+      }
+      match /{document=**} { allow read, write: if false; }
+    }
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+      match /memberships/{storeId} {
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow write: if false; // Cloud Functions maintain membership index
+      }
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
