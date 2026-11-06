@@ -58,20 +58,36 @@ export default function App() {
     const products = store?.products ?? [];
     const stats = useMemo(() => ({ total: products.length, published: products.filter(p => p.published).length, low: products.filter(p => p.quantity < 5).length, units: products.reduce((sum, p) => sum + p.quantity, 0) }), [products]);
     const alert = (message: string, kind: 'ok' | 'error' = 'ok') => { setNotice({ message, kind }); };
-    async function updateStore(patch: Partial<Store>) { if (!store)
-        return; try {
+    async function updateStore(patch: Partial<Store>) {
+    if (!store) return;
+
+    try {
         if (firebaseConfigured) {
-            if (!db)
-                throw Error('Firebase unavailable');
-            await updateDoc(doc(db, 'stores', store.id), patch);
+        if (!db) {
+            throw new Error('Firebase is unavailable');
         }
-        else
-            setStores(prev => prev.map(s => s.id === activeId ? { ...s, ...patch } : s));
+
+        const storeRef = doc(db, 'stores', store.id);
+        await updateDoc(storeRef, patch);
+        }
+
+        // Update the dashboard after saving successfully.
+        setStores((currentStores) =>
+        currentStores.map((currentStore) =>
+            currentStore.id === store.id
+            ? { ...currentStore, ...patch }
+            : currentStore
+        )
+        );
+
         alert('Changes saved successfully');
+    } catch (error) {
+        const message =
+        error instanceof Error ? error.message : 'Unable to save changes';
+
+        alert(message, 'error');
     }
-    catch (e) {
-        alert((e as Error).message, 'error');
-    } }
+    }
     async function saveProduct(p: Product) { if (!store)
         return; try {
         if (firebaseConfigured) {
